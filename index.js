@@ -6,7 +6,10 @@ const app =express()
 const cors=require('cors')
 const morgan=require('morgan')
 
+
 port=process.env.PORT;
+
+const database=require('./database');
 
 //middle ware
 
