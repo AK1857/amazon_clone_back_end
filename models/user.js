@@ -1,4 +1,4 @@
-const mongoose = require('moongse');
+const mongoose = require('mongoose');
 const moment=require('moment');
 
 const Schema=mongoose.Schema;
@@ -26,11 +26,12 @@ const userSchema=new Schema({
 
     createdAt:{
         type:Date,
-        default:moment.format("DD/MM/YYYY")+";"+moment.format("hh:mm:ss")
+      
+        default:moment().format("DD/MM/YYYY")+";"+moment().format("hh:mm:ss")
     },
     updatedAt:{
         type:Date,
-        default:moment.format("DD/MM/YYYY")+";"+moment.format("hh:mm:ss")
+        default:moment().format("DD/MM/YYYY")+";"+moment().format("hh:mm:ss")
     }
 
 });

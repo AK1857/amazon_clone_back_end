@@ -11,10 +11,16 @@ port=process.env.PORT;
 
 const database=require('./database');
 
+// user rout 
+
+const userRoutes=require('./routes/users')
+
+
 //middle ware
 
 app.use(cors()) ;
 app.use(morgan('dev'));
+app.use('/api/users',userRoutes);
 
 //rout
 
