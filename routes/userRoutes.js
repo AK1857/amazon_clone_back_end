@@ -20,7 +20,8 @@ router.use(bodyParser.urlencoded({extended :true}));
 
 // default route
 // access public
-//url: localhost://500/user
+//url: localhost://500/api/user
+//method:get
 
 router.get('/',(req,res)=>{
 
@@ -36,6 +37,7 @@ router.get('/',(req,res)=>{
 // route for user registration 
 //access:public
 // ursl: localhost://500/user/api/register
+// method:post
 
 router.post('/register',
         [
@@ -59,9 +61,13 @@ router.post('/register',
                 });
             }
             
+
+            const saltvalue=bcrypt.genSaltSync(10);
+            const hasdedPassword=bcrypt.hashSync(req.body.password,saltvalue);
                 return res.status(200).json({
                     "status":true,
-                    "data":req.body
+                    "data":req.body,
+                    "hasdedPassword":hasdedPassword
                 });
             
 

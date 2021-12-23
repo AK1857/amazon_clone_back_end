@@ -13,7 +13,7 @@ const database=require('./database');
 
 // user rout 
 
-const userRoutes=require('./routes/users')
+const userRoutes=require('./routes/userRoutes')
 
 
 //middle ware
