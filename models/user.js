@@ -12,6 +12,7 @@ const userSchema=new Schema({
     email:{
         type:String,
         required:true,
+        unique:true
     },
     password:{
         type:String,
@@ -25,12 +26,12 @@ const userSchema=new Schema({
     },
 
     createdAt:{
-        type:Date,
+        type:String,
       
         default:moment().format("DD/MM/YYYY")+";"+moment().format("hh:mm:ss")
     },
     updatedAt:{
-        type:Date,
+        type:String,
         default:moment().format("DD/MM/YYYY")+";"+moment().format("hh:mm:ss")
     }
 
