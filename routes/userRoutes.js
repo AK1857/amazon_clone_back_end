@@ -13,6 +13,8 @@ const user = require('./../models/user');
 
 const User = require('./../models/user');
 
+const storage=require('./storage');
+
 const token = process.env.TOKEN_KEY;
 
 // middleware setup
@@ -59,7 +61,8 @@ router.post('/register',
 
             return res.status(400).json({
                 "status": false,
-                "errors for empty field": errors.array()
+                "errors ": errors.array(),
+                "message":"Form validation error"
             });
         }
        
@@ -120,6 +123,114 @@ router.post('/register',
 
 
     });
+
+
+// route for upload profile pic
+//access:public
+// ursl: localhost://500/user/api/uploadProfilePic
+// method:post
+
+router.post('/uploadProfilePic',(req,res)=>{
+
+    let upload=storage.getProfilePicUpload();
+
+    upload(req,res,(error)=>{
+
+        console.log(req.file);
+
+       if(error){
+        return res.status(400).json({
+            'status':false,
+            'error':error,
+            'message':'File Upload Failed..'
+        })
+       }
+    else{
+
+        return res.status(200).json({
+            'status':true,
+            ' message':'File Upload Sucess'
+        })
+    }
+    });
+});
+
+
+ // route for user login 
+//access:public
+// ursl: localhost://500/user/api/uploadProfilePic
+// method:post
+
+
+router.post('/login',
+    [
+        // check empty field
+
+        check('password').not().isEmpty().trim().escape(),
+
+        // check email validateion
+        check('email').isEmail().normalizeEmail()
+
+    ],
+    (req,res)=>{
+
+        const errors = validationResult(req);
+        // check form validation
+        if (!errors.isEmpty()) {
+
+            return res.status(400).json({
+                "status": false,
+                "errors ": errors.array(),
+                "message":"Form validation error"
+            });
+        }
+
+
+        
+        // checking for eamail existence 
+        user.findOne({'email':req.body.email}).then(user=>{
+
+
+            // if user dont exist
+            if(!user){
+                return res.status(404).json({
+                    'status':false,
+                    'message':"User dont exist"
+                });
+            }
+            else{
+
+                // match user password
+                let isPasswordMatch=bcrypt.compareSync(req.body.password,user.password);
+                
+
+                // check is password match
+                    if(isPasswordMatch){
+                        return res.status(200).json({
+                            'status':true,
+                            'Message':"user login success"
+                        });
+                    }
+                else{
+                    return res.status(401).json({
+                        'status':false,
+                        'Message':"Password not match.."
+                    });
+                }
+                
+            }
+       }).catch(error=>{
+
+        return res.status(502).json({
+            'status':false,
+            'error':" Database Error"+error
+        });
+       });
+
+
+
+    
+});
 
 
 
