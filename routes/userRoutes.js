@@ -16,7 +16,10 @@ const User = require('./../models/user');
 
 const storage=require('./storage');
 
+const verifyToken=require('./../middleware/verify_token');
+
 const token_key = process.env.TOKEN_KEY;
+
 
 // middleware setup
 
@@ -249,11 +252,11 @@ router.post('/login',
         });
        });
 
-
-
     
 });
 
+
+// verity token
 
 
 
