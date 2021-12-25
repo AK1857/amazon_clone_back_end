@@ -9,13 +9,14 @@ const { status } = require('express/lib/response');
 
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
+const { token } = require('morgan');
 const user = require('./../models/user');
 
 const User = require('./../models/user');
 
 const storage=require('./storage');
 
-const token = process.env.TOKEN_KEY;
+const token_key = process.env.TOKEN_KEY;
 
 // middleware setup
 
@@ -203,14 +204,35 @@ router.post('/login',
                 // match user password
                 let isPasswordMatch=bcrypt.compareSync(req.body.password,user.password);
                 
+                //JSON WEB TKEN GENERATE
+
+                let token=jwt.sign({
+                    id:user._id,
+                    email:user.email,
+                },
+                token_key,
+                {
+                    expiresIn:3600,
+                });
+
+
+
+
 
                 // check is password match
                     if(isPasswordMatch){
                         return res.status(200).json({
                             'status':true,
-                            'Message':"user login success"
+                            'Message':"user login success",
+                            'token':token,
+                            'user':user
                         });
                     }
+
+
+
+
+
                 else{
                     return res.status(401).json({
                         'status':false,
