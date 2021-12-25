@@ -8,7 +8,7 @@ const { check, validationResult, body } = require('express-validator');
 const { status } = require('express/lib/response');
 
 const jwt = require('jsonwebtoken');
-const moment = require('moment');
+const moment=require('moment');
 const { token } = require('morgan');
 const user = require('./../models/user');
 
@@ -134,30 +134,60 @@ router.post('/register',
 // ursl: localhost://500/user/api/uploadProfilePic
 // method:post
 
-router.post('/uploadProfilePic',(req,res)=>{
+router.post('/uploadProfilePic',
+    verifyToken,
+    (req,res)=>{
 
     let upload=storage.getProfilePicUpload();
 
-    upload(req,res,(error)=>{
+    upload(req,res,(error)=>{   
 
-        console.log(req.file);
+        // profile pic upload has an arror
+        if(error){
+            return res.status(400).json({
+                "status": false,
+                "errors ": error.array,
+                "message":"File upload fail.."
+            });
+        }
 
-       if(error){
-        return res.status(400).json({
-            'status':false,
-            'error':error,
-            'message':'File Upload Failed..'
+        // file not selected
+        if(!req.file){
+           return res.status(400).json({
+                "status": false,
+                "errors ": error.array,
+                "message":"Form validation error"
+            });
+        }
+
+        
+
+
+        let temp={
+            profile_pic:req.file.filename,
+            updateAt:moment().format("DD/MM/YYYY")+";"+moment().format("hh:mm:ss")
+        }
+        // stor file name from user document
+
+        User.findOneAndUpdate({_id:req.user.id},{$set:{ temp }})
+        .then(user=>{
+            return res.status(200).json({
+                "status": true,
+                
+                "message":"File Upload success",
+                "profile_pic":"http://localhost:500/profile_pic/"+req.file.filename
+            });
         })
-       }
-    else{
-
-        return res.status(200).json({
-            'status':true,
-            ' message':'File Upload Sucess'
-        })
-    }
-    });
-});
+        .catch(error=>{
+            return res.status(502).json({
+                "status": false,
+                "errors ": errors.array(),
+                "message":"Database errror founded"
+            });
+        });
+    
+    }); 
+}); // uploadProfilePic router end
 
 
  // route for user login 
